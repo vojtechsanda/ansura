@@ -1,0 +1,22 @@
+{
+  "name": "ansura",
+  "version": "1.5.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/create-icons.js && webpack",
+    "build:icons": "node scripts/create-icons.js",
+    "build:ext": "webpack"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "dependencies": {
+    "@google/genai": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.300",
+    "copy-webpack-plugin": "^12.0.0",
+    "ts-loader": "^9.0.0",
+    "typescript": "^5.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0"
+  }
+}
