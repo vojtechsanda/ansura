@@ -54,14 +54,14 @@ let isDismissable = false;
 function mount(): HTMLElement {
   if (ansuraRoot) return ansuraRoot;
 
-  shadowHost = document.createElement('div');
-  const shadow = shadowHost.attachShadow({ mode: 'closed' });
+  shadowHost = document.createElement("div");
+  const shadow = shadowHost.attachShadow({ mode: "closed" });
 
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = STYLES;
 
-  ansuraRoot = document.createElement('div');
-  ansuraRoot.id = 'ansura-root';
+  ansuraRoot = document.createElement("div");
+  ansuraRoot.id = "ansura-root";
 
   shadow.appendChild(style);
   shadow.appendChild(ansuraRoot);
@@ -72,48 +72,51 @@ function mount(): HTMLElement {
 function makeDismissable(): void {
   if (isDismissable) return;
   isDismissable = true;
-  document.addEventListener('keydown', hide, { once: true });
-  document.addEventListener('click', hide, { once: true });
+  document.addEventListener("keydown", hide, { once: true });
+  document.addEventListener("click", hide, { once: true });
 }
 
 export function showLoading(onCancel: () => void): void {
   isDismissable = false;
   const el = mount();
-  el.innerHTML = '';
-  const spinner = document.createElement('span');
-  spinner.className = 'ansura-spinner';
+  el.innerHTML = "";
+  const spinner = document.createElement("span");
+  spinner.className = "ansura-spinner";
   el.appendChild(spinner);
-  el.appendChild(document.createTextNode('Thinking…'));
-  requestAnimationFrame(() => el.classList.add('visible'));
+  el.appendChild(document.createTextNode("Thinking…"));
+  requestAnimationFrame(() => el.classList.add("visible"));
 
   const cancel = () => {
-    document.removeEventListener('click', cancel);
-    document.removeEventListener('keydown', cancel);
+    document.removeEventListener("click", cancel);
+    document.removeEventListener("keydown", cancel);
     hide();
     onCancel();
   };
-  document.addEventListener('click', cancel);
-  document.addEventListener('keydown', cancel);
+  document.addEventListener("click", cancel);
+  document.addEventListener("keydown", cancel);
 }
 
 export function showStatus(message: string): void {
   if (!ansuraRoot) return;
-  ansuraRoot.innerHTML = '';
-  const spinner = document.createElement('span');
-  spinner.className = 'ansura-spinner';
+  ansuraRoot.innerHTML = "";
+  const spinner = document.createElement("span");
+  spinner.className = "ansura-spinner";
   ansuraRoot.appendChild(spinner);
   ansuraRoot.appendChild(document.createTextNode(message));
 }
 
 export function showAnswer(answer: string): void {
-  const lines = answer.split('\n').map(l => l.trim()).filter(Boolean);
+  const lines = answer
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
   const el = mount();
-  el.innerHTML = '';
+  el.innerHTML = "";
 
   if (lines.length > 1) {
-    const ul = document.createElement('ul');
+    const ul = document.createElement("ul");
     for (const line of lines) {
-      const li = document.createElement('li');
+      const li = document.createElement("li");
       li.textContent = line;
       ul.appendChild(li);
     }
@@ -122,23 +125,23 @@ export function showAnswer(answer: string): void {
     el.textContent = lines[0] ?? answer;
   }
 
-  requestAnimationFrame(() => el.classList.add('visible'));
+  requestAnimationFrame(() => el.classList.add("visible"));
   makeDismissable();
 }
 
 export function showError(message: string): void {
   const el = mount();
   el.textContent = `Error: ${message}`;
-  requestAnimationFrame(() => el.classList.add('visible'));
+  requestAnimationFrame(() => el.classList.add("visible"));
   makeDismissable();
 }
 
 export function hide(): void {
   if (!ansuraRoot) return;
   isDismissable = false;
-  ansuraRoot.classList.remove('visible');
+  ansuraRoot.classList.remove("visible");
   ansuraRoot.addEventListener(
-    'transitionend',
+    "transitionend",
     () => {
       shadowHost?.remove();
       shadowHost = null;

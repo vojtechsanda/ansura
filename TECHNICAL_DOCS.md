@@ -202,14 +202,14 @@ All messages use a typed discriminated union. Define in `src/types/index.ts` and
 
 /** Messages sent FROM the service worker TO the content script */
 export type MessageToContent =
-  | { type: 'TOGGLE_SELECTION_MODE' }
-  | { type: 'SHOW_ANSWER'; answer: string }
-  | { type: 'SHOW_ERROR'; message: string };
+  | { type: "TOGGLE_SELECTION_MODE" }
+  | { type: "SHOW_ANSWER"; answer: string }
+  | { type: "SHOW_ERROR"; message: string };
 
 /** Messages sent FROM the content script TO the service worker */
 export type MessageToBackground =
-  | { type: 'ELEMENT_SELECTED'; html: string }
-  | { type: 'SELECTION_CANCELLED' };
+  | { type: "ELEMENT_SELECTED"; html: string }
+  | { type: "SELECTION_CANCELLED" };
 ```
 
 Use `switch (message.type)` in every `chrome.runtime.onMessage` listener. Never use string literals outside this file — always import the union type.
@@ -233,9 +233,13 @@ This is the current, actively maintained SDK (GA as of May 2025). It fully suppo
 ### 6.2 Usage in the Service Worker
 
 ```typescript
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
 
-async function callGemini(html: string, apiKey: string, model: string): Promise<string> {
+async function callGemini(
+  html: string,
+  apiKey: string,
+  model: string,
+): Promise<string> {
   const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `
@@ -256,7 +260,7 @@ ${html}
   });
 
   const answer = response.text?.trim();
-  if (!answer) throw new Error('Empty response from Gemini');
+  if (!answer) throw new Error("Empty response from Gemini");
   return answer;
 }
 ```
@@ -363,37 +367,43 @@ The API key is read from `chrome.storage.sync` inside the service worker and pas
 
 ```js
 // webpack.config.js
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = [
   // --- Service worker: MUST use target 'webworker' ---
   {
-    entry: { 'background/service-worker': './src/background/service-worker.ts' },
-    target: 'webworker', // critical — service workers have no 'window'
-    mode: 'production',
-    module: { rules: [{ test: /\.ts$/, use: 'ts-loader', exclude: /node_modules/ }] },
-    resolve: { extensions: ['.ts', '.js'] },
-    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js' },
+    entry: {
+      "background/service-worker": "./src/background/service-worker.ts",
+    },
+    target: "webworker", // critical — service workers have no 'window'
+    mode: "production",
+    module: {
+      rules: [{ test: /\.ts$/, use: "ts-loader", exclude: /node_modules/ }],
+    },
+    resolve: { extensions: [".ts", ".js"] },
+    output: { path: path.resolve(__dirname, "dist"), filename: "[name].js" },
   },
 
   // --- Content script + options page: standard 'web' target ---
   {
     entry: {
-      'content/content': './src/content/content.ts',
-      'options/options': './src/options/options.ts',
+      "content/content": "./src/content/content.ts",
+      "options/options": "./src/options/options.ts",
     },
-    target: 'web',
-    mode: 'production',
-    module: { rules: [{ test: /\.ts$/, use: 'ts-loader', exclude: /node_modules/ }] },
-    resolve: { extensions: ['.ts', '.js'] },
-    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js' },
+    target: "web",
+    mode: "production",
+    module: {
+      rules: [{ test: /\.ts$/, use: "ts-loader", exclude: /node_modules/ }],
+    },
+    resolve: { extensions: [".ts", ".js"] },
+    output: { path: path.resolve(__dirname, "dist"), filename: "[name].js" },
     plugins: [
       new CopyPlugin({
         patterns: [
-          { from: 'manifest.json', to: '.' },
-          { from: 'public/icons', to: 'icons' },
-          { from: 'src/options/options.html', to: 'options' },
+          { from: "manifest.json", to: "." },
+          { from: "public/icons", to: "icons" },
+          { from: "src/options/options.html", to: "options" },
         ],
       }),
     ],
