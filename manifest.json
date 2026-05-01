@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Ansura",
-  "version": "1.0.0",
-  "description": "Select any question on any webpage and get the correct answer via Gemini.",
+  "version": "0.1.0",
+  "description": "Point-and-click browser extension for instant, low-profile Gemini answers.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "background": {
