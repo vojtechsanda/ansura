@@ -92,6 +92,15 @@ export function showLoading(onCancel: () => void): void {
   }, { once: true });
 }
 
+export function showStatus(message: string): void {
+  if (!ansuraRoot) return;
+  ansuraRoot.innerHTML = '';
+  const spinner = document.createElement('span');
+  spinner.className = 'ansura-spinner';
+  ansuraRoot.appendChild(spinner);
+  ansuraRoot.appendChild(document.createTextNode(message));
+}
+
 export function showAnswer(answer: string): void {
   const lines = answer.split('\n').map(l => l.trim()).filter(Boolean);
   const el = mount();

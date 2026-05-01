@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ansura",
-  "version": "1.5.0",
+  "version": "1.7.1",
   "description": "Select a quiz element and get the correct answer via Gemini.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/*"],

@@ -13,6 +13,14 @@ async function setActiveTabs(tabs: Set<number>): Promise<void> {
   await chrome.storage.session.set({ [SESSION_KEY]: [...tabs] });
 }
 
+function is429(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    'status' in err &&
+    (err as unknown as { status: number }).status === 429
+  );
+}
+
 async function callGemini(html: string, apiKey: string, model: string, signal: AbortSignal): Promise<string> {
   const ai = new GoogleGenAI({ apiKey });
 
@@ -84,30 +92,69 @@ async function handleElementSelected(tabId: number, html: string): Promise<void>
   activeControllers.set(tabId, controller);
 
   try {
-    const { apiKey, model } = await chrome.storage.sync.get(['apiKey', 'model']);
+    const stored = await chrome.storage.sync.get(['apiKey', 'model', 'fallbackModels']);
+    const apiKey = stored.apiKey as string | undefined;
+
     if (!apiKey) {
       activeControllers.delete(tabId);
-      const msg: MessageToContent = {
+      chrome.tabs.sendMessage(tabId, {
         type: 'SHOW_ERROR',
         message: 'No API key set — open extension options to add your Gemini API key.',
-      };
-      chrome.tabs.sendMessage(tabId, msg);
+      } satisfies MessageToContent);
       return;
     }
-    const modelName: string = model || 'gemini-3-flash-preview';
-    const answer = await callGemini(html, apiKey as string, modelName, controller.signal);
+
+    const primaryModel: string = (stored.model as string | undefined) || 'gemini-3-flash-preview';
+    const fallbackModels: string[] = parseFallbackModels(stored.fallbackModels as string | undefined);
+    const modelsToTry = [primaryModel, ...fallbackModels];
+
+    let lastError: unknown;
+    for (const model of modelsToTry) {
+      if (controller.signal.aborted) return;
+
+      // Notify the overlay which model we're trying, but only after the first 429
+      if (model !== primaryModel) {
+        chrome.tabs.sendMessage(tabId, {
+          type: 'SHOW_STATUS',
+          message: `Rate limited — trying ${model}…`,
+        } satisfies MessageToContent);
+      }
+
+      try {
+        const answer = await callGemini(html, apiKey, model, controller.signal);
+        activeControllers.delete(tabId);
+        chrome.tabs.sendMessage(tabId, { type: 'SHOW_ANSWER', answer } satisfies MessageToContent);
+        return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        if (is429(err) && model !== modelsToTry[modelsToTry.length - 1]) {
+          lastError = err;
+          continue; // try next model
+        }
+        lastError = err;
+        break;
+      }
+    }
+
     activeControllers.delete(tabId);
-    const msg: MessageToContent = { type: 'SHOW_ANSWER', answer };
-    chrome.tabs.sendMessage(tabId, msg);
+    if (lastError instanceof DOMException && (lastError as DOMException).name === 'AbortError') return;
+    chrome.tabs.sendMessage(tabId, {
+      type: 'SHOW_ERROR',
+      message: lastError instanceof Error ? lastError.message : 'Unknown error',
+    } satisfies MessageToContent);
   } catch (err) {
     activeControllers.delete(tabId);
     if (err instanceof DOMException && err.name === 'AbortError') return;
-    const msg: MessageToContent = {
+    chrome.tabs.sendMessage(tabId, {
       type: 'SHOW_ERROR',
       message: err instanceof Error ? err.message : 'Unknown error',
-    };
-    chrome.tabs.sendMessage(tabId, msg);
+    } satisfies MessageToContent);
   }
+}
+
+function parseFallbackModels(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return raw.split(',').map(s => s.trim()).filter(Boolean);
 }
 
 async function handleSelectionCancelled(tabId: number): Promise<void> {

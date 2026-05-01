@@ -1,5 +1,5 @@
 import { activate, deactivate } from './selector';
-import { showAnswer, showError, showLoading, hide } from './overlay';
+import { showAnswer, showError, showLoading, showStatus, hide } from './overlay';
 import type { MessageToContent, MessageToBackground } from '../types/index';
 
 let isSelectionModeActive = false;
@@ -28,6 +28,9 @@ chrome.runtime.onMessage.addListener((message: MessageToContent) => {
       if (!waitingForResponse) break;
       waitingForResponse = false;
       showAnswer(message.answer);
+      break;
+    case 'SHOW_STATUS':
+      if (waitingForResponse) showStatus(message.message);
       break;
     case 'SHOW_ERROR':
       if (!waitingForResponse) { hide(); break; }

@@ -34,6 +34,9 @@
       cursor: pointer;
     }
     button:hover { background: #2563eb; }
+    button:disabled { opacity: 0.55; cursor: default; }
+    #test-btn { background: #6b7280; }
+    #test-btn:hover:not(:disabled) { background: #4b5563; }
     #status { margin-left: 10px; font-size: 13px; color: #16a34a; }
     .hint {
       font-size: 11px;
@@ -50,6 +53,15 @@
       color: #374151;
     }
     .hint code:hover { background: #e5e7eb; }
+    #test-result {
+      margin-top: 10px;
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 5px;
+      display: none;
+    }
+    #test-result.ok  { display: block; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    #test-result.err { display: block; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
   </style>
 </head>
 <body>
@@ -61,16 +73,22 @@
   <label for="model">Model</label>
   <input type="text" id="model" placeholder="gemini-3-flash-preview">
   <p class="hint">
-    Options:
+    Suggestions (or type any valid model name):
     <code>gemini-2.5-flash-lite</code>
     <code>gemini-2.5-flash</code>
     <code>gemini-3-flash-preview</code>
   </p>
 
+  <label for="fallback-models">Fallback models <span style="font-weight:400;color:#9ca3af">(on rate limit, tried in order)</span></label>
+  <input type="text" id="fallback-models" placeholder="gemini-2.5-flash, gemini-2.5-flash-lite">
+  <p class="hint">Comma-separated. Leave empty to disable fallback.</p>
+
   <div>
     <button id="save-btn">Save</button>
+    <button id="test-btn">Test model</button>
     <span id="status"></span>
   </div>
+  <div id="test-result"></div>
 
   <script src="options.js"></script>
 </body>
