@@ -28,6 +28,8 @@ Open the extension options (right-click the toolbar icon → Options, or `chrome
 | **Model**           | Primary model to use (e.g. `gemini-2.5-flash`)                               |
 | **Fallback models** | Comma-separated list of models to try when the primary one hits a rate limit |
 
+Ensure your usage aligns with the Gemini [rate limits](https://aistudio.google.com/rate-limit).
+
 The **Test models** button checks all configured models against the API and shows a per-model result.
 
 ## Usage
