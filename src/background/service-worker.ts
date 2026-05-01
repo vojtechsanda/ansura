@@ -106,7 +106,7 @@ async function handleElementSelected(tabId: number, html: string): Promise<void>
 
     const primaryModel: string = (stored.model as string | undefined) || 'gemini-3-flash-preview';
     const fallbackModels: string[] = parseFallbackModels(stored.fallbackModels as string | undefined);
-    const modelsToTry = [primaryModel, ...fallbackModels];
+    const modelsToTry = [...new Set([primaryModel, ...fallbackModels])];
 
     let lastError: unknown;
     for (const model of modelsToTry) {

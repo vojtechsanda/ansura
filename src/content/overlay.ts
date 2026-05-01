@@ -86,10 +86,14 @@ export function showLoading(onCancel: () => void): void {
   el.appendChild(document.createTextNode('Thinking…'));
   requestAnimationFrame(() => el.classList.add('visible'));
 
-  document.addEventListener('click', () => {
+  const cancel = () => {
+    document.removeEventListener('click', cancel);
+    document.removeEventListener('keydown', cancel);
     hide();
     onCancel();
-  }, { once: true });
+  };
+  document.addEventListener('click', cancel);
+  document.addEventListener('keydown', cancel);
 }
 
 export function showStatus(message: string): void {

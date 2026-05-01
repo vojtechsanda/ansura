@@ -32,35 +32,64 @@ saveBtn.addEventListener('click', async () => {
 
 testBtn.addEventListener('click', async () => {
   const apiKey = apiKeyInput.value.trim();
-  const model = modelInput.value.trim() || 'gemini-3-flash-preview';
+  const primary = modelInput.value.trim() || 'gemini-3-flash-preview';
+  const fallbackRaw = fallbackModelsInput.value.trim();
+  const fallbacks = fallbackRaw ? fallbackRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const models = [...new Set([primary, ...fallbacks])];
 
   if (!apiKey) {
-    showTestResult('err', 'Enter an API key first.');
+    renderRows([{ model: '', status: 'err', message: 'Enter an API key first.' }]);
     return;
   }
 
   testBtn.disabled = true;
-  testBtn.textContent = 'Testing…';
-  testResult.className = '';
+  saveBtn.disabled = true;
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-    await ai.models.generateContent({
-      model,
-      contents: 'Respond with the single word: OK',
-      config: { temperature: 0, maxOutputTokens: 5 },
-    });
-    showTestResult('ok', `✓ ${model} is working.`);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    showTestResult('err', `✗ ${message}`);
-  } finally {
-    testBtn.disabled = false;
-    testBtn.textContent = 'Test model';
+  type Row = { model: string; status: 'pending' | 'ok' | 'err'; message: string };
+  const rows: Row[] = models.map(m => ({ model: m, status: 'pending', message: 'Testing…' }));
+  renderRows(rows);
+
+  for (let i = 0; i < models.length; i++) {
+    testBtn.textContent = `Testing ${i + 1} / ${models.length}…`;
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      await ai.models.generateContent({
+        model: models[i],
+        contents: 'Respond with the single word: OK',
+        config: { temperature: 0, maxOutputTokens: 5 },
+      });
+      rows[i] = { model: models[i], status: 'ok', message: '✓ OK' };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      rows[i] = { model: models[i], status: 'err', message };
+    }
+    renderRows(rows);
   }
+
+  testBtn.disabled = false;
+  testBtn.textContent = 'Test models';
+  saveBtn.disabled = false;
 });
 
-function showTestResult(type: 'ok' | 'err', message: string): void {
-  testResult.textContent = message;
-  testResult.className = type;
+function renderRows(rows: { model: string; status: string; message: string }[]): void {
+  testResult.innerHTML = '';
+  for (const row of rows) {
+    const div = document.createElement('div');
+    div.className = 'test-row';
+
+    if (row.model) {
+      const name = document.createElement('span');
+      name.className = 'test-model';
+      name.textContent = row.model;
+      div.appendChild(name);
+    }
+
+    const status = document.createElement('span');
+    status.className = `test-status ${row.status}`;
+    status.textContent = row.message;
+    div.appendChild(status);
+
+    testResult.appendChild(div);
+  }
+  testResult.className = rows.length ? 'show' : '';
 }

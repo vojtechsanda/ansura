@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Ansura",
-  "version": "1.7.1",
-  "description": "Select a quiz element and get the correct answer via Gemini.",
+  "version": "1.0.0",
+  "description": "Select any question on any webpage and get the correct answer via Gemini.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "background": {
@@ -19,15 +19,21 @@
   "action": {
     "default_icon": {
       "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
       "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "128": "icons/icon128.png",
+      "256": "icons/icon256.png",
+      "512": "icons/icon512.png"
     },
     "default_title": "Ansura — Click to select an element"
   },
   "options_page": "options/options.html",
   "icons": {
     "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "128": "icons/icon128.png",
+    "256": "icons/icon256.png",
+    "512": "icons/icon512.png"
   }
 }

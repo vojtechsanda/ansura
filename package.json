@@ -1,11 +1,9 @@
 {
   "name": "ansura",
-  "version": "1.7.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node scripts/create-icons.js && webpack",
-    "build:icons": "node scripts/create-icons.js",
-    "build:ext": "webpack"
+    "build": "webpack"
   },
   "packageManager": "pnpm@10.33.0",
   "dependencies": {
