@@ -45,6 +45,8 @@ The **Test models** button checks all configured models against the API and show
 
 4. **The answer** appears in a subtle overlay in the bottom-right.
 
+![Subtle answer overlay](docs/images/answered-question.png)
+
 5. **Click** anywhere or **press any key** to dismiss the overlay at any time.
 
 Press **Esc** during selection to cancel without sending.
