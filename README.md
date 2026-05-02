@@ -22,11 +22,11 @@ After installation, reload any open webpages for the extension to work properly.
 
 Open the extension options (right-click the toolbar icon → Options, or `chrome://extensions` → Ansura → Details → Extension options):
 
-| Setting             | Description                                                                  |
-| ------------------- | ---------------------------------------------------------------------------- |
-| **Gemini API Key**  | Your [Google AI Studio API key](https://aistudio.google.com/api-keys?)       |
-| **Model**           | Primary model to use (e.g. `gemini-2.5-flash`)                               |
-| **Fallback models** | Comma-separated list of models to try when the primary one hits a rate limit |
+| Setting             | Description                                                            |
+| ------------------- | ---------------------------------------------------------------------- |
+| **Gemini API Key**  | Your [Google AI Studio API key](https://aistudio.google.com/api-keys?) |
+| **Model**           | Primary model to use (e.g. `gemini-2.5-flash`)                         |
+| **Fallback models** | Comma-separated list of models to try when the primary one fails       |
 
 Ensure your usage aligns with the Gemini [rate limits](https://aistudio.google.com/rate-limit).
 

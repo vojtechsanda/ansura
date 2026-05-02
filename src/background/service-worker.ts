@@ -13,14 +13,6 @@ async function setActiveTabs(tabs: Set<number>): Promise<void> {
   await chrome.storage.session.set({ [SESSION_KEY]: [...tabs] });
 }
 
-function is429(err: unknown): boolean {
-  return (
-    err instanceof Error &&
-    "status" in err &&
-    (err as unknown as { status: number }).status === 429
-  );
-}
-
 async function callGemini(
   html: string,
   apiKey: string,
@@ -118,8 +110,16 @@ async function handleElementSelected(
       return;
     }
 
-    const primaryModel: string =
-      (stored.model as string | undefined) || "gemini-3-flash-preview";
+    const primaryModel = stored.model as string | undefined;
+    if (!primaryModel) {
+      activeControllers.delete(tabId);
+      chrome.tabs.sendMessage(tabId, {
+        type: "SHOW_ERROR",
+        message: "No model set — open extension options to choose a model.",
+      } satisfies MessageToContent);
+      return;
+    }
+
     const fallbackModels: string[] = parseFallbackModels(
       stored.fallbackModels as string | undefined,
     );
@@ -129,11 +129,11 @@ async function handleElementSelected(
     for (const model of modelsToTry) {
       if (controller.signal.aborted) return;
 
-      // Notify the overlay which model we're trying, but only after the first 429
+      // Notify the overlay which model we're trying
       if (model !== primaryModel) {
         chrome.tabs.sendMessage(tabId, {
           type: "SHOW_STATUS",
-          message: `Rate limited — trying ${model}…`,
+          message: `Trying fallback ${model}…`,
         } satisfies MessageToContent);
       }
 
@@ -147,7 +147,7 @@ async function handleElementSelected(
         return;
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        if (is429(err) && model !== modelsToTry[modelsToTry.length - 1]) {
+        if (model !== modelsToTry[modelsToTry.length - 1]) {
           lastError = err;
           continue; // try next model
         }

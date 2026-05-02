@@ -22,7 +22,7 @@ Load `dist/` as an unpacked extension in `chrome://extensions`. Reload the exten
 
 ```
 src/
-  background/service-worker.ts   # Gemini API calls, AbortController, retry on 429, badge
+  background/service-worker.ts   # Gemini API calls, AbortController, retry on failure, badge
   content/
     content.ts                   # Message listener; coordinates selector ↔ overlay
     selector.ts                  # activate(onSelected?)/deactivate(); hover + click + Esc
@@ -42,7 +42,7 @@ Two webpack configs in `webpack.config.js`:
 - **No popup** — `chrome.action.onClicked` fires the service worker; `default_popup` must NOT be set
 - **Selection mode state** — tracked in `chrome.storage.session` (keyed by tab ID); service worker has no persistent memory between events
 - **Cancel during loading** — any click or keypress while "Thinking…" shows fires `CANCEL_REQUEST` to the service worker, which calls `AbortController.abort()`. The `abortSignal` is passed inside `config` to `ai.models.generateContent()`
-- **429 retry** — service worker loops through `[...new Set([primaryModel, ...fallbackModels])]`; duplicates are skipped. Sends `SHOW_STATUS` to update overlay text between attempts
+- **failure retry** — service worker loops through `[...new Set([primaryModel, ...fallbackModels])]`; duplicates are skipped. Sends `SHOW_STATUS` to update overlay text between attempts
 - **Shadow DOM overlay** — isolated from host page CSS; `mode: 'closed'`
 - **Multi-answer** — Gemini is prompted to put each answer on its own line; overlay splits on `\n` and renders a `<ul>` if multiple
 
@@ -58,7 +58,6 @@ Content → SW:  ELEMENT_SELECTED { html } | SELECTION_CANCELLED | CANCEL_REQUES
 Package: `@google/genai` (not the deprecated `@google/generative-ai`).
 
 - `abortSignal` goes inside `config`, not at the top level of `generateContent` params
-- 429 errors are caught by checking `'status' in err && err.status === 429`
 
 ## Options storage keys
 
