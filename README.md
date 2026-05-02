@@ -11,7 +11,7 @@ Designed for **discretion**, it displays answers in a subtle, semi-transparent o
 1. Go to [the latest release](https://github.com/vojtechsanda/ansura/releases/latest)
 2. Download the **ZIP** file `ansura-v0.x.x.zip` and extract it to a safe location
    where you won’t accidentally delete it, as the extension won’t load if the files are removed.
-3. Go to the browser extension manager [chrome://extensions/](chrome://extensions/)
+3. Go to the browser extension manager `chrome://extensions/`
 4. Enable `Developer mode`. In Google Chrome at the top right, in Microsoft Edge on the left side.
 5. The `Load unpacked` option should appear. Click on it and navigate to the directory where you extracted the files.
 6. That's it! Extension is now ready to use 🎉
@@ -20,7 +20,7 @@ After installation, reload any open webpages for the extension to work properly.
 
 ## Configuration
 
-Open the extension options (right-click the toolbar icon → Options, or `chrome://extensions` → Ansura → Details → Extension options):
+Open the extension options (right-click the toolbar icon → Options, or `chrome://extensions/` → Ansura → Details → Extension options):
 
 | Setting             | Description                                                            |
 | ------------------- | ---------------------------------------------------------------------- |
