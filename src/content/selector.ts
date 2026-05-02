@@ -1,4 +1,4 @@
-import type { MessageToBackground } from "../types/index";
+import type { MessageToBackground } from '../types/index';
 
 let styleInjected = false;
 let currentHover: Element | null = null;
@@ -8,7 +8,7 @@ let onKeydown: ((e: KeyboardEvent) => void) | null = null;
 
 function injectStyle(): void {
   if (styleInjected) return;
-  const style = document.createElement("style");
+  const style = document.createElement('style');
   style.textContent = `
     .ansura-hover {
       outline: 1px solid rgba(99, 179, 237, 0.35) !important;
@@ -21,12 +21,12 @@ function injectStyle(): void {
 
 export function activate(onSelected?: () => void): void {
   injectStyle();
-  document.body.style.cursor = "crosshair";
+  document.body.style.cursor = 'crosshair';
 
   onMouseover = (e: MouseEvent) => {
-    if (currentHover) currentHover.classList.remove("ansura-hover");
+    if (currentHover) currentHover.classList.remove('ansura-hover');
     currentHover = e.target as Element;
-    currentHover.classList.add("ansura-hover");
+    currentHover.classList.add('ansura-hover');
   };
 
   onClick = (e: MouseEvent) => {
@@ -34,41 +34,41 @@ export function activate(onSelected?: () => void): void {
     e.stopPropagation();
     const el = e.target as Element;
     // Remove highlight synchronously before deactivate so there's no flicker
-    el.classList.remove("ansura-hover");
+    el.classList.remove('ansura-hover');
     currentHover = null;
     deactivate();
     onSelected?.();
     const msg: MessageToBackground = {
-      type: "ELEMENT_SELECTED",
+      type: 'ELEMENT_SELECTED',
       html: el.outerHTML,
     };
     chrome.runtime.sendMessage(msg);
   };
 
   onKeydown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
+    if (e.key === 'Escape') {
       deactivate();
-      const msg: MessageToBackground = { type: "SELECTION_CANCELLED" };
+      const msg: MessageToBackground = { type: 'SELECTION_CANCELLED' };
       chrome.runtime.sendMessage(msg);
     }
   };
 
-  document.addEventListener("mouseover", onMouseover);
-  document.addEventListener("click", onClick, true);
-  document.addEventListener("keydown", onKeydown);
+  document.addEventListener('mouseover', onMouseover);
+  document.addEventListener('click', onClick, true);
+  document.addEventListener('keydown', onKeydown);
 }
 
 export function deactivate(): void {
-  if (onMouseover) document.removeEventListener("mouseover", onMouseover);
-  if (onClick) document.removeEventListener("click", onClick, true);
-  if (onKeydown) document.removeEventListener("keydown", onKeydown);
+  if (onMouseover) document.removeEventListener('mouseover', onMouseover);
+  if (onClick) document.removeEventListener('click', onClick, true);
+  if (onKeydown) document.removeEventListener('keydown', onKeydown);
   onMouseover = null;
   onClick = null;
   onKeydown = null;
 
   if (currentHover) {
-    currentHover.classList.remove("ansura-hover");
+    currentHover.classList.remove('ansura-hover');
     currentHover = null;
   }
-  document.body.style.cursor = "";
+  document.body.style.cursor = '';
 }
