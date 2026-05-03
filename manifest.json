@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ansura",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Point-and-click browser extension for instant, low-profile Gemini answers.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/*"],
