@@ -1,3 +1,5 @@
+import { DEFAULT_OPACITY } from '../constants';
+
 const STYLES = `
   :host { all: initial; }
 
@@ -25,7 +27,7 @@ const STYLES = `
     transition: opacity 0.15s ease;
   }
 
-  #ansura-root.visible { opacity: 0.6; }
+  #ansura-root.visible { opacity: var(--ansura-opacity); }
 
   .ansura-spinner {
     display: inline-block;
@@ -50,6 +52,12 @@ const STYLES = `
 let shadowHost: HTMLElement | null = null;
 let ansuraRoot: HTMLElement | null = null;
 let isDismissable = false;
+let currentOpacity = DEFAULT_OPACITY;
+
+export function setOpacity(value: number): void {
+  currentOpacity = value;
+  ansuraRoot?.style.setProperty('--ansura-opacity', String(value));
+}
 
 function mount(): HTMLElement {
   if (ansuraRoot) return ansuraRoot;
@@ -62,6 +70,7 @@ function mount(): HTMLElement {
 
   ansuraRoot = document.createElement('div');
   ansuraRoot.id = 'ansura-root';
+  setOpacity(currentOpacity);
 
   shadow.appendChild(style);
   shadow.appendChild(ansuraRoot);

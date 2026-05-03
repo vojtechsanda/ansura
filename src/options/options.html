@@ -98,6 +98,33 @@
         background: #e5e7eb;
       }
 
+      .opacity-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .opacity-row input[type='range'] {
+        flex: 1;
+        margin-bottom: 0;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+      }
+
+      .opacity-row input[type='range']:focus {
+        box-shadow: none;
+        border-color: transparent;
+      }
+
+      #opacity-value {
+        font-size: 12px;
+        color: #6b7280;
+        min-width: 32px;
+        text-align: right;
+      }
+
       #test-result {
         display: none;
         margin-top: 10px;
@@ -173,6 +200,12 @@
       id="fallback-models"
       placeholder="gemini-3.1-flash-lite-preview, gemini-2.5-flash" />
     <p class="hint">Comma-separated. Leave empty to disable fallback.</p>
+
+    <label for="overlay-opacity">Answer overlay opacity</label>
+    <div class="opacity-row">
+      <input type="range" id="overlay-opacity" min="0.1" max="1" step="0.01" />
+      <span id="opacity-value">60%</span>
+    </div>
 
     <div>
       <button id="save-btn">Save</button>

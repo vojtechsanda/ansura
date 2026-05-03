@@ -1,20 +1,30 @@
 import { GoogleGenAI } from '@google/genai';
+import { DEFAULT_OPACITY } from '../constants';
 
 const apiKeyInput = document.getElementById('api-key') as HTMLInputElement;
 const modelInput = document.getElementById('model') as HTMLInputElement;
 const fallbackModelsInput = document.getElementById('fallback-models') as HTMLInputElement;
+const opacityInput = document.getElementById('overlay-opacity') as HTMLInputElement;
+const opacityValue = document.getElementById('opacity-value') as HTMLSpanElement;
 const saveBtn = document.getElementById('save-btn') as HTMLButtonElement;
 const testBtn = document.getElementById('test-btn') as HTMLButtonElement;
 const statusEl = document.getElementById('status') as HTMLSpanElement;
 const testResult = document.getElementById('test-result') as HTMLDivElement;
 
 chrome.storage.sync
-  .get(['apiKey', 'model', 'fallbackModels'])
-  .then(({ apiKey, model, fallbackModels }) => {
+  .get(['apiKey', 'model', 'fallbackModels', 'overlayOpacity'])
+  .then(({ apiKey, model, fallbackModels, overlayOpacity }) => {
     if (apiKey) apiKeyInput.value = apiKey as string;
     if (model) modelInput.value = model as string;
     if (fallbackModels) fallbackModelsInput.value = fallbackModels as string;
+    const opacity = typeof overlayOpacity === 'number' ? overlayOpacity : DEFAULT_OPACITY;
+    opacityInput.value = String(opacity);
+    opacityValue.textContent = `${Math.round(opacity * 100)}%`;
   });
+
+opacityInput.addEventListener('input', () => {
+  opacityValue.textContent = `${Math.round(Number(opacityInput.value) * 100)}%`;
+});
 
 document.querySelectorAll<HTMLElement>('.hint code').forEach((chip) => {
   chip.addEventListener('click', () => {
@@ -27,7 +37,8 @@ saveBtn.addEventListener('click', async () => {
   const apiKey = apiKeyInput.value.trim();
   const model = modelInput.value.trim() || 'gemini-3-flash-preview';
   const fallbackModels = fallbackModelsInput.value.trim();
-  await chrome.storage.sync.set({ apiKey, model, fallbackModels });
+  const overlayOpacity = Number(opacityInput.value);
+  await chrome.storage.sync.set({ apiKey, model, fallbackModels, overlayOpacity });
   statusEl.textContent = 'Saved ✓';
   setTimeout(() => {
     statusEl.textContent = '';

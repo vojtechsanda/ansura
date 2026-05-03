@@ -1,9 +1,19 @@
 import { activate, deactivate } from './selector';
-import { showAnswer, showError, showLoading, showStatus, hide } from './overlay';
+import { showAnswer, showError, showLoading, showStatus, hide, setOpacity } from './overlay';
 import type { MessageToContent, MessageToBackground } from '../types/index';
 
 let isSelectionModeActive = false;
 let waitingForResponse = false;
+
+chrome.storage.sync.get('overlayOpacity').then(({ overlayOpacity }) => {
+  if (typeof overlayOpacity === 'number') setOpacity(overlayOpacity);
+});
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && changes.overlayOpacity) {
+    setOpacity(changes.overlayOpacity.newValue as number);
+  }
+});
 
 chrome.runtime.onMessage.addListener((message: MessageToContent) => {
   switch (message.type) {
