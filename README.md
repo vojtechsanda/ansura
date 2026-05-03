@@ -6,6 +6,8 @@ Designed for **discretion**, it displays answers in a subtle, semi-transparent o
 
 **No sidebars, no copy-pasting, and no visible footprint.**
 
+> **Early access (v0.x.x)** — Ansura is under development. Expect rough edges, breaking changes between versions, and features that are still evolving.
+
 ## Installation
 
 1. Go to [the latest release](https://github.com/vojtechsanda/ansura/releases/latest)
