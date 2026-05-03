@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Ansura",
   "version": "0.1.2",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1RU4WOy6h/1szPVwKC0sKbNo68TaZAw2/6WtUssmS7crEsMvKHjvGy/4qT6ggpT6E0cjsmD+PawGtytL4Fr9Wnm8qyhxqQ7mCXdyR0kAedqhocBjluz11lxOB2PDSwsM0vcAAyo08KNSe/fMGK5RVLCMKS65pN8qVYBab6HHnIrxM4TDEHAtRkvAXMkltBeEETTO6PoP9Y9cZe11CbQgcXaBWkbg++1HSY8mQezdukg05/nnNUUFGJgHfvMAsbcUs5UZ+zyrb3iU4fPvWSAgfKkbZnCxsuaMFeni33znZZyznAIGDtdzc5Z04N78I+Wht/IaipVSoPBgV9AuT23o3wIDAQAB",
   "description": "Point-and-click browser extension for instant, low-profile Gemini answers.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/*"],
